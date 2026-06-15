@@ -119,7 +119,35 @@ void view()
 }
 void search() //
 {
+    // 분실물 정보 조회 화면 출력
+    printf("분실물 관리 시스템\n\n");
+    printf("분실물 정보 조회\n");
 
+    // 등록된 분실물 목록을 번호와 함께 출력
+    for(int i=0;i<count;i++)
+    {
+        printf("%d. %s\n", i+1, names[i]);
+    }
+
+    // 사용자가 조회할 분실물 번호 입력
+    printf("\n조회할 분실물 번호 입력: ");
+    int num;
+    scanf("%d", &num);
+
+    // 입력받은 번호에 해당하는 분실물 정보 출력
+    clear();
+    printf("분실물 관리 시스템\n\n");
+    printf("분실물 정보 조회 결과\n");
+    printf("습득 날짜: %s\n", dates[num-1]);
+    printf("물품 이름: %s\n", names[num-1]);
+    printf("습득 장소: %s\n", pick_places[num-1]);
+    printf("보관 장소: %s\n", store_places[num-1]);
+
+    // Enter 키를 누르면 메인 메뉴로 이동
+    printf("\nEnter 키를 눌러 메인 메뉴로 이동합니다.");
+    getchar();getchar(); //앞에 scanf받을때 enter 키 한번 빼고 enter 한번 더 받음
+    clear();
+    menu();
 }
 void collect()
 {
