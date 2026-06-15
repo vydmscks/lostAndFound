@@ -112,7 +112,7 @@ void view()
     {
         printf("%d. %s\n", i+1, names[i]);
     }
-    printf("조회가 완료되었습니다. 오래된 정보는 표시되지 않을 수 있습니다.\nEnter 키를 눌러 메인 메뉴로 이동합니다.");
+    printf("전체 목록 조회가 완료되었습니다. 오래된 정보는 표시되지 않을 수 있습니다.\nEnter 키를 눌러 메인 메뉴로 이동합니다.");
     getchar();getchar();
     clear();
     menu();
@@ -133,6 +133,16 @@ void search()
     printf("\n조회할 분실물 번호 입력: ");
     int num;
     scanf("%d", &num);
+
+    if(num < 1 || num > count)
+    {
+        printf("잘못된 번호입니다. Enter 키를 눌러 메인 메뉴로 이동합니다.\n");
+        getchar();
+        getchar();
+        clear();
+        menu();
+        return;
+    }
 
     // 입력받은 번호에 해당하는 분실물 정보 출력
     clear();
@@ -165,7 +175,7 @@ void collect()
 
     if(num < 1 || num > count)
     {
-        printf("잘못된 번호입니다.\n");
+        printf("잘못된 번호입니다. Enter 키를 눌러 메인 메뉴로 이동합니다.\n");
         getchar();
         getchar();
         clear();
