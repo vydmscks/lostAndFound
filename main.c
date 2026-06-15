@@ -123,5 +123,50 @@ void search() //
 }
 void collect()
 {
+    printf("분실물 관리 시스템\n\n");
+    printf("수령 처리\n");
 
-}
+    for(int i = 0; i < count; i++)
+    {
+        printf("%d. %s\n", i + 1, names[i]);
+    }
+
+    printf("\n수령 완료된 물품 번호를 입력하세요: ");
+    int num;
+    scanf("%d", &num);
+
+    if(num < 1 || num > count)
+    {
+        printf("잘못된 번호입니다.\n");
+        getchar();
+        getchar();
+        clear();
+        menu();
+        return;
+    }
+
+    FILE *file = fopen("list.txt", "w");
+
+    for(int i = 0; i < count; i++)
+    {
+        if(i != num - 1)
+        {
+            fprintf(file,
+                    "날짜: %s | 물품명: %s | 습득장소: %s | 보관장소: %s\n",
+                    dates[i],
+                    names[i],
+                    pick_places[i],
+                    store_places[i]);
+        }
+    }
+
+    fclose(file);
+
+    printf("수령 처리가 완료되었습니다.\n");
+    printf("Enter 키를 눌러 메인 메뉴로 이동합니다.");
+    getchar();
+    getchar();
+
+    clear();
+    menu();
+} 
