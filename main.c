@@ -117,7 +117,7 @@ void view()
     clear();
     menu();
 }
-void search() //
+void search()
 {
     // 분실물 정보 조회 화면 출력
     printf("분실물 관리 시스템\n\n");
