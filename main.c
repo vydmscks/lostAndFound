@@ -13,9 +13,20 @@ void view();
 void search();
 void collect();
 void menu();
+int check_ctrl_d(char text[]);
 void clear() // 콘솔창 비우는 함수
 {
     printf("\033[2J\033[H");
+}
+int check_ctrl_d(char text[]) // 입력 중 Ctrl+D를 누르면 메인 메뉴로 돌아가는 함수
+{
+    if(strchr(text, 4) != NULL)
+    {
+        clear();
+        menu();
+        return 1;
+    }
+    return 0;
 }
 void readfile()
 {
@@ -59,6 +70,7 @@ void menu()
     printf("이동할 메뉴 번호 입력: ");
     int menu;
     scanf("%d", &menu);
+    getchar(); // 메뉴 번호 입력 후 남아 있는 Enter 키 제거
     clear();
     switch (menu)
     {
@@ -91,12 +103,32 @@ void append()
     printf("습득물 등록\n");
     printf("습득 날짜를 입력하세요 (YYYY-MM-DD): ");
     char date[11]; scanf(" %s", date);
+    if(check_ctrl_d(date))
+    {
+        fclose(file);
+        return;
+    }
     printf("물품 이름을 입력하세요 (공백없이): ");
     char name[100]; scanf(" %s", name);
+    if(check_ctrl_d(name))
+    {
+        fclose(file);
+        return;
+    }
     printf("습득 장소를 입력하세요 (공백없이): ");
     char pplace[100]; scanf(" %s", pplace);
+    if(check_ctrl_d(pplace))
+    {
+        fclose(file);
+        return;
+    }
     printf("보관 장소를 입력하세요 (공백없이): ");
     char splace[100]; scanf(" %s", splace);
+    if(check_ctrl_d(splace))
+    {
+        fclose(file);
+        return;
+    }
     fprintf(file, "날짜: %s | 물품명: %s | 습득장소: %s | 보관장소: %s\n", date, name, pplace, splace);
     printf("등록이 완료되었습니다. Enter 키를 눌러 메인 메뉴로 이동합니다.");
     getchar();getchar();
@@ -113,7 +145,7 @@ void view()
         printf("%d. %s\n", i+1, names[i]);
     }
     printf("전체 목록 조회가 완료되었습니다. 오래된 정보는 표시되지 않을 수 있습니다.\nEnter 키를 눌러 메인 메뉴로 이동합니다.");
-    getchar();getchar();
+    getchar();
     clear();
     menu();
 }
@@ -131,8 +163,14 @@ void search()
 
     // 사용자가 조회할 분실물 번호 입력
     printf("\n조회할 분실물 번호 입력: ");
+    char input[100];
+    scanf(" %s", input);
+    if(check_ctrl_d(input))
+    {
+        return;
+    }
     int num;
-    scanf("%d", &num);
+    sscanf(input, "%d", &num);
 
     if(num < 1 || num > count)
     {
@@ -170,8 +208,14 @@ void collect()
     }
 
     printf("\n수령 완료된 물품 번호를 입력하세요: ");
+    char input[100];
+    scanf(" %s", input);
+    if(check_ctrl_d(input))
+    {
+        return;
+    }
     int num;
-    scanf("%d", &num);
+    sscanf(input, "%d", &num);
 
     if(num < 1 || num > count)
     {
@@ -207,4 +251,4 @@ void collect()
 
     clear();
     menu();
-} 
+}
