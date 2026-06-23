@@ -14,11 +14,12 @@ void search();
 void collect();
 void menu();
 int check_ctrl_d(char text[]);
+int read_line(char text[], size_t size);
 void clear() // 콘솔창 비우는 함수
 {
     printf("\033[2J\033[H");
 }
-int check_ctrl_d(char text[]) // 입력 중 Ctrl+D를 누르면 메인 메뉴로 돌아가는 함수
+int check_ctrl_d(char text[]) // 입력 중 Ctrl+D를 누르면 메인 메뉴로 돌아가는 함수 => 최윤우
 {
     if(strchr(text, 4) != NULL)
     {
@@ -28,7 +29,26 @@ int check_ctrl_d(char text[]) // 입력 중 Ctrl+D를 누르면 메인 메뉴로
     }
     return 0;
 }
-void readfile()
+int read_line(char text[], size_t size) //습득물 등록할때 문자열이 정해진 형식에 맞게 들어왔는지 검사하는 함수 => 최윤우
+{
+    if (fgets(text, size, stdin) == NULL)   //문자열 입력받고, 만약 오류로 입력 안되면 0 반환
+    {
+        return 0;
+    }
+
+    if (strchr(text, '\n') != NULL) //입력받고 뒤에 '\n'있으면 NULL값으로 바꾸고 정상적인 반환이라는 뜻으로 1반환
+    {
+        text[strcspn(text, "\n")] = '\0';
+        return 1;
+    }
+
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF)   //너무 길어서 배열에 다 들어가지 못하면 너무 길다는 뜻으로 -1 반환하고, 버퍼 비움
+    {
+    }
+    return -1;
+}
+void readfile() //파일을 읽는 함수 => 표은찬
 {
     count = 0;
     // 파일 선언
@@ -49,31 +69,36 @@ void readfile()
     count++; // 습득물 목록 반복문에서 사용하기 위한 변수
     }
 }
-int main()
+int main()  //함수 실행하는 main 함수
 {
     clear();
     menu();
     return 0;
 }
 
-void menu()
+void menu() //메인 메뉴 여는 함수 + 분실물 어떻게 할건지 결정(등록, 목록, 정보 조회, 수령 처리) => 표은찬
 {
     readfile();
     // 메인 메뉴
     printf("분실물 관리 시스템\n\n");
     printf("메인 메뉴\n");
     printf("1. 습득물 등록\n"); // 완료 - 표은찬
-    printf("2. 습득물 목록\n"); // 완료 - 표은찬
-    printf("3. 분실물 정보 조회\n"); // TODO - 홍길동
-    printf("4. 수령 처리\n"); // TODO - 홍길동
+    printf("2. 습득물 목록 조회\n"); // 완료 - 표은찬
+    printf("3. 분실물 정보 조회\n"); // 완료 - 최윤우
+    printf("4. 수령 처리\n"); // 완료 - 최승빈
     printf("0. 프로그램 종료\n\n");
     printf("이동할 메뉴 번호 입력: ");
-    int menu;
-    scanf("%d", &menu);
+    int men;
+    scanf("%d", &men);
     getchar(); // 메뉴 번호 입력 후 남아 있는 Enter 키 제거
     clear();
-    switch (menu)
+
+
+    switch (men)
     {
+    case 0:
+        break;
+    
     case 1:
         append();
         break;
@@ -88,42 +113,107 @@ void menu()
 
     case 4:
         collect();
-        break;
 
     default:
-        break;
+        printf("잘못된 메뉴 번호입니다. 다시 입력해 주세요.\n");
+        printf("Enter 키를 눌러 메인 메뉴로 이동합니다.");
+        getchar();
+        clear();
+        menu();
+        
     }
 }
-void append()
+void append()   //습득물 등록 함수 => 표은찬
 {
     FILE* file;
     file = fopen("list.txt", "a");
 
     printf("분실물 관리 시스템\n\n");
     printf("습득물 등록\n");
-    printf("습득 날짜를 입력하세요 (YYYY-MM-DD): ");
-    char date[11]; scanf(" %s", date);
+    char date[12];
+    while (1)
+    {
+        printf("습득 날짜를 입력하세요 (YYYY-MM-DD): ");
+        int result = read_line(date, sizeof(date)); //-1,0,1 상태에 따라 3개중 1개 반환 
+
+        if (result == 0)
+        {
+            fclose(file);
+            return;
+        }
+        if (result == 1 && strlen(date) == 10 && date[4] == '-' && date[7] == '-') //정상적 입력 형식인지 확인
+        {
+            break;
+        }
+
+        printf("잘못된 형식입니다. YYYY-MM-DD 형식으로 다시 입력하세요.\n");
+    }
     if(check_ctrl_d(date))
     {
         fclose(file);
         return;
     }
-    printf("물품 이름을 입력하세요 (공백없이): ");
-    char name[100]; scanf(" %s", name);
+
+    char name[100];
+    while (1)
+    {
+        printf("물품 이름을 입력하세요 (공백없이): ");
+        int result = read_line(name, sizeof(name));
+        if (result == 0)
+        {
+            fclose(file);
+            return;
+        }
+        if (result == 1 && name[0] != '\0')
+        {
+            break;
+        }
+        printf("입력이 너무 길거나 비어 있습니다. 다시 입력하세요.\n");
+    }
     if(check_ctrl_d(name))
     {
         fclose(file);
         return;
     }
-    printf("습득 장소를 입력하세요 (공백없이): ");
-    char pplace[100]; scanf(" %s", pplace);
+
+    char pplace[100];
+    while (1)
+    {
+        printf("습득 장소를 입력하세요 (공백없이): ");
+        int result = read_line(pplace, sizeof(pplace));
+        if (result == 0)
+        {
+            fclose(file);
+            return;
+        }
+        if (result == 1 && pplace[0] != '\0')
+        {
+            break;
+        }
+        printf("입력이 너무 길거나 비어 있습니다. 다시 입력하세요.\n");
+    }
     if(check_ctrl_d(pplace))
     {
         fclose(file);
         return;
     }
-    printf("보관 장소를 입력하세요 (공백없이): ");
-    char splace[100]; scanf(" %s", splace);
+
+    char splace[100];
+    while (1)
+    {
+        printf("보관 장소를 입력하세요 (공백없이): ");
+        int result = read_line(splace, sizeof(splace));
+        if (result == 0)
+        {
+            fclose(file);
+            return;
+        }
+        if (result == 1 && splace[0] != '\0')
+        {
+            break;
+        }
+        printf("입력이 너무 길거나 비어 있습니다. 다시 입력하세요.\n");
+    }
     if(check_ctrl_d(splace))
     {
         fclose(file);
@@ -131,15 +221,15 @@ void append()
     }
     fprintf(file, "날짜: %s | 물품명: %s | 습득장소: %s | 보관장소: %s\n", date, name, pplace, splace);
     printf("등록이 완료되었습니다. Enter 키를 눌러 메인 메뉴로 이동합니다.");
-    getchar();getchar();
+    getchar();
     fclose(file);
     clear();
     menu();
 }
-void view()
+void view()     //등록된 분실물 목록 확인 => 표은찬
 {
     printf("분실물 관리 시스템\n\n");
-    printf("분실물 목록\n");
+    printf("분실물 목록 조회\n");
     for(int i=0;i<count;i++)
     {
         printf("%d. %s\n", i+1, names[i]);
@@ -149,7 +239,7 @@ void view()
     clear();
     menu();
 }
-void search()
+void search()   //분실물 정보 조회 => 최윤우
 {
     // 분실물 정보 조회 화면 출력
     printf("분실물 관리 시스템\n\n");
@@ -197,7 +287,7 @@ void search()
     clear();
     menu();
 }
-void collect()
+void collect()  //수령 처리 함수 => 최승빈
 {
     printf("분실물 관리 시스템\n\n");
     printf("수령 처리\n");
