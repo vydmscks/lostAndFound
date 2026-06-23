@@ -229,7 +229,7 @@ void append()   //습득물 등록 함수 => 표은찬
 void view()     //등록된 분실물 목록 확인 => 표은찬
 {
     printf("분실물 관리 시스템\n\n");
-    printf("분실물 목록 조회\n");
+    printf("습득물 목록 조회\n");
     for(int i=0;i<count;i++)
     {
         printf("%d. %s\n", i+1, names[i]);
